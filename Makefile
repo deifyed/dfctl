@@ -20,4 +20,4 @@ uninstall: $(INSTALL_DIR)/$(BINARY_NAME)
 	rm $(INSTALL_DIR)/$(BINARY_NAME)
 
 clean:
-	rm $(BINARY_NAME)
+	rm $(BUILD_DIR)
