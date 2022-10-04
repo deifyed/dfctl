@@ -1,20 +1,20 @@
 package cmd
 
 import (
-	"github.com/deifyed/infect/cmd/store"
+	"github.com/deifyed/infect/cmd/track"
 	"github.com/spf13/cobra"
 )
 
-// storeCmd represents the store command
-var storeCmd = &cobra.Command{
-	Use:   "store",
+// trackCmd represents the store command
+var trackCmd = &cobra.Command{
+	Use:   "track",
 	Short: "A brief description of your command",
 	Args:  cobra.ExactArgs(1),
-	RunE:  store.RunE(fs),
+	RunE:  track.RunE(fs),
 }
 
 func init() {
-	rootCmd.AddCommand(storeCmd)
+	rootCmd.AddCommand(trackCmd)
 
 	// Here you will define your flags and configuration settings.
 
