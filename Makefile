@@ -6,18 +6,20 @@ BINARY_NAME=infect
 fmt:
 	@gofmt -w .
 
-$(BINARY_NAME):
+test:
+	go test -v main.go
+
+build:
+	mkdir -p $(BUILD_DIR)
 	go build -o $(BUILD_DIR)/$(BINARY_NAME) main.go
 
-build: $(BINARY_NAME)
-
-install: build
+install:
+	test -f $(BUILD_DIR)/$(BINARY_NAME)
 	mkdir -p $(INSTALL_DIR)
-	mkdir -p $(BUILD_DIR)
 	cp $(BUILD_DIR)/$(BINARY_NAME) $(INSTALL_DIR)
 
-uninstall: $(INSTALL_DIR)/$(BINARY_NAME)
+uninstall:
 	rm $(INSTALL_DIR)/$(BINARY_NAME)
 
 clean:
-	rm $(BUILD_DIR)
+	@rm -rf $(BUILD_DIR)
