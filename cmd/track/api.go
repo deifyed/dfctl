@@ -54,7 +54,7 @@ func track(fs *afero.Afero, targetPath string) error {
 		return fmt.Errorf("moving directory: %w", err)
 	}
 
-	err = os.Symlink(dotFilesDir, targetPath)
+	err = os.Symlink(dest, targetPath)
 	if err != nil {
 		return fmt.Errorf("linking: %w", err)
 	}
