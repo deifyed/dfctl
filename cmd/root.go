@@ -39,14 +39,18 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(
-                &cfgFile,
-                "config",
-                "",
-                "config file (default is $HOME/.config/infect/infect.yaml)",
-	)
+	// Find home directory.
+	home, err := os.UserHomeDir()
+	cobra.CheckErr(err)
 
-	viper.SetDefault(config.DotFilesDir, path.Join(, "dotfiles"))
+	viper.SetDefault(config.DotFilesDir, path.Join(home, ".config", "infect", "dotfiles"))
+
+	rootCmd.PersistentFlags().StringVar(
+		&cfgFile,
+		"config",
+		"",
+		"config file (default is $HOME/.config/infect/infect.yaml)",
+	)
 
 	rootCmd.Flags().StringVarP(
 		&dotfilesDir,
@@ -59,21 +63,17 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	// Find home directory.
+	home, err := os.UserHomeDir()
+	cobra.CheckErr(err)
 
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
+	viper.SetDefault(config.DotFilesDir, path.Join(home, ".config", "infect", "dotfiles"))
 
-		// Search config in home directory with name ".infect" (without extension).
-		viper.AddConfigPath(path.Join(home, ".config", "infect"))
-		viper.AddConfigPath(home)
-		viper.SetConfigType("yaml")
-		viper.SetConfigName(".infect")
-	}
+	// Search config in home directory with name ".infect" (without extension).
+	viper.AddConfigPath(path.Join(home, ".config", "infect"))
+	viper.AddConfigPath(home)
+	viper.SetConfigType("yaml")
+	viper.SetConfigName(".infect")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
