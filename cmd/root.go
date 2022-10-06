@@ -5,14 +5,16 @@ import (
 	"os"
 	"path"
 
+	"github.com/deifyed/infect/pkg/config"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	fs      = &afero.Afero{Fs: afero.NewOsFs()}
-	cfgFile string
+	fs          = &afero.Afero{Fs: afero.NewOsFs()}
+	cfgFile     string
+	dotfilesDir string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -37,11 +39,27 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.infect.yaml)")
+	rootCmd.PersistentFlags().StringVar(
+                &cfgFile,
+                "config",
+                "",
+                "config file (default is $HOME/.config/infect/infect.yaml)",
+	)
+
+	viper.SetDefault(config.DotFilesDir, path.Join(, "dotfiles"))
+
+	rootCmd.Flags().StringVarP(
+		&dotfilesDir,
+		"dotfiles-dir",
+		"d",
+		viper.GetString(config.DotFilesDir),
+		"directory where dotfiles are stored",
+	)
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+
 	if cfgFile != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
@@ -51,8 +69,8 @@ func initConfig() {
 		cobra.CheckErr(err)
 
 		// Search config in home directory with name ".infect" (without extension).
-		viper.AddConfigPath(home)
 		viper.AddConfigPath(path.Join(home, ".config", "infect"))
+		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
 		viper.SetConfigName(".infect")
 	}

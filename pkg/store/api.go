@@ -1,5 +1,5 @@
 package store
 
-func Add(targetPath string) error {
+func Add(targetPath string, dotFilesPath string) error {
 	return nil
 }
