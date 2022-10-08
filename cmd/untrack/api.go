@@ -3,7 +3,7 @@ package untrack
 import (
 	"fmt"
 
-	"github.com/deifyed/infect/pkg/store"
+	"github.com/deifyed/infect/pkg/storage"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 )
@@ -22,7 +22,7 @@ func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 
 // untrack will unlink the target and return the source file or folder to this location
 func untrack(fs *afero.Afero, targetPath string) error {
-	srcPath, err := store.Get(fs, targetPath)
+	srcPath, err := storage.Get(fs, targetPath)
 	if err != nil {
 		return fmt.Errorf("storing path: %w", err)
 	}

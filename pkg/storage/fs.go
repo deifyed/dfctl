@@ -1,4 +1,4 @@
-package store
+package storage
 
 import (
 	"bytes"
@@ -10,26 +10,26 @@ import (
 	"github.com/spf13/viper"
 )
 
-func open(fs *afero.Afero) (storage, error) {
+func open(fs *afero.Afero) (store, error) {
 	storePath := viper.GetString(config.StorePath)
 
 	content, err := fs.ReadFile(storePath)
 	if err != nil {
-		return storage{}, fmt.Errorf("reading store file: %w", err)
+		return store{}, fmt.Errorf("reading store file: %w", err)
 	}
 
-	var store storage
+	var db store
 
-	err = json.Unmarshal(content, &store)
+	err = json.Unmarshal(content, &db)
 	if err != nil {
-		return storage{}, fmt.Errorf("unmarshalling store file: %w", err)
+		return store{}, fmt.Errorf("unmarshalling store file: %w", err)
 	}
 
-	return store, nil
+	return db, nil
 }
 
-func close(fs *afero.Afero, store storage) error {
-	rawStore, err := json.Marshal(store)
+func close(fs *afero.Afero, db store) error {
+	rawStore, err := json.Marshal(db)
 	if err != nil {
 		return fmt.Errorf("marshalling store: %w", err)
 	}

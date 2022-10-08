@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/deifyed/infect/pkg/config"
-	"github.com/deifyed/infect/pkg/store"
+	"github.com/deifyed/infect/pkg/storage"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -44,7 +44,7 @@ func track(fs *afero.Afero, targetPath string) error {
 		return fmt.Errorf("ensuring dotfiles directory: %w", err)
 	}
 
-	err = store.Add(fs, targetPath, dest)
+	err = storage.Add(fs, targetPath, dest)
 	if err != nil {
 		return fmt.Errorf("storing path: %w", err)
 	}

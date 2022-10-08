@@ -1,4 +1,4 @@
-package store
+package storage
 
 import (
 	"errors"
@@ -9,14 +9,14 @@ import (
 )
 
 func Add(fs *afero.Afero, targetPath string, dotFilesPath string) error {
-	store, err := open(fs)
+	db, err := open(fs)
 	if err != nil {
 		return fmt.Errorf("opening store: %w", err)
 	}
 
-	store.Paths[targetPath] = dotFilesPath
+	db.Paths[targetPath] = dotFilesPath
 
-	err = close(fs, store)
+	err = close(fs, db)
 	if err != nil {
 		return fmt.Errorf("closing store: %w", err)
 	}
@@ -25,12 +25,12 @@ func Add(fs *afero.Afero, targetPath string, dotFilesPath string) error {
 }
 
 func Get(fs *afero.Afero, targetPath string) (string, error) {
-	store, err := open(fs)
+	db, err := open(fs)
 	if err != nil {
 		return "", fmt.Errorf("opening store: %w", err)
 	}
 
-	dotFilesPath, ok := store.Paths[targetPath]
+	dotFilesPath, ok := db.Paths[targetPath]
 	if !ok {
 		return "", fmt.Errorf("path not found in store")
 	}
@@ -39,7 +39,7 @@ func Get(fs *afero.Afero, targetPath string) (string, error) {
 }
 
 func GetAll(fs *afero.Afero) ([]string, error) {
-	store, err := open(fs)
+	db, err := open(fs)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			return []string{}, nil
@@ -49,7 +49,7 @@ func GetAll(fs *afero.Afero) ([]string, error) {
 	}
 
 	var paths []string
-	for path := range store.Paths {
+	for path := range db.Paths {
 		paths = append(paths, path)
 	}
 
