@@ -21,8 +21,8 @@ func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 			return nil
 		}
 
-		for index, path := range trackedPaths {
-			fmt.Printf("[%d] %s", index, path)
+		for index, trackedPath := range trackedPaths {
+			fmt.Printf("[%d] %s", index, trackedPath.OriginalPath)
 		}
 
 		return nil

@@ -22,7 +22,7 @@ func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 
 // untrack will unlink the target and return the source file or folder to this location
 func untrack(fs *afero.Afero, targetPath string) error {
-	srcPath, err := storage.Get(fs, targetPath)
+	trackedPath, err := storage.Get(fs, targetPath)
 	if err != nil {
 		return fmt.Errorf("storing path: %w", err)
 	}
@@ -31,7 +31,7 @@ func untrack(fs *afero.Afero, targetPath string) error {
 		return fmt.Errorf("removing symlink: %w", err)
 	}
 
-	err = fs.Rename(srcPath, targetPath)
+	err = fs.Rename(trackedPath.DotFilesPath, targetPath)
 	if err != nil {
 		return fmt.Errorf("moving directory: %w", err)
 	}
