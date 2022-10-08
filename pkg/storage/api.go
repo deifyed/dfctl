@@ -8,13 +8,13 @@ import (
 	"github.com/spf13/afero"
 )
 
-func Add(fs *afero.Afero, targetPath string, dotFilesPath string) error {
+func Add(fs *afero.Afero, trackedPath Path) error {
 	db, err := open(fs)
 	if err != nil {
 		return fmt.Errorf("opening store: %w", err)
 	}
 
-	upsert(&db, Path{OriginalPath: targetPath, DotFilesPath: dotFilesPath})
+	upsert(&db, trackedPath)
 
 	err = close(fs, db)
 	if err != nil {
