@@ -1,7 +1,9 @@
 package store
 
 import (
+	"errors"
 	"fmt"
+	"os"
 
 	"github.com/spf13/afero"
 )
@@ -34,4 +36,22 @@ func Get(fs *afero.Afero, targetPath string) (string, error) {
 	}
 
 	return dotFilesPath, nil
+}
+
+func GetAll(fs *afero.Afero) ([]string, error) {
+	store, err := open(fs)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return []string{}, nil
+		}
+
+		return nil, fmt.Errorf("opening store: %w", err)
+	}
+
+	var paths []string
+	for path := range store.Paths {
+		paths = append(paths, path)
+	}
+
+	return paths, nil
 }
