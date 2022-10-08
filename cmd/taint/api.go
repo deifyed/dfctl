@@ -19,7 +19,7 @@ func RunE(fs *afero.Afero) func(*cobra.Command, []string) error {
 
 		trackedPath.Taint = true
 
-		err = storage.Add(fs, trackedPath)
+		err = storage.Put(fs, trackedPath)
 		if err != nil {
 			return fmt.Errorf("adding tracked path: %w", err)
 		}

@@ -44,7 +44,7 @@ func track(fs *afero.Afero, targetPath string) error {
 		return fmt.Errorf("ensuring dotfiles directory: %w", err)
 	}
 
-	err = storage.Add(fs, storage.Path{OriginalPath: targetPath, DotFilesPath: dest})
+	err = storage.Put(fs, storage.Path{OriginalPath: targetPath, DotFilesPath: dest})
 	if err != nil {
 		return fmt.Errorf("storing path: %w", err)
 	}

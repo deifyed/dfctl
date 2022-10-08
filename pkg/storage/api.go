@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/afero"
 )
 
-func Add(fs *afero.Afero, trackedPath Path) error {
+func Put(fs *afero.Afero, trackedPath Path) error {
 	db, err := open(fs)
 	if err != nil {
 		return fmt.Errorf("opening store: %w", err)
