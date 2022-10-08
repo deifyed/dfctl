@@ -26,4 +26,8 @@ infect list
 # Taint a certain path.
 # Mark certain paths as to not spread them when infecting filesystem.
 infect taint <path>
+
+# Untaint a certain path.
+# Unmark certain path so infection will spread the path again.
+infect untaint <path>
 ```
