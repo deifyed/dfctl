@@ -7,7 +7,7 @@ fmt:
 	@gofmt -w .
 
 test:
-	go test -v main.go
+	go test -v ./...
 
 build:
 	mkdir -p $(BUILD_DIR)
