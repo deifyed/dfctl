@@ -4,15 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-
-	"github.com/deifyed/infect/pkg/config"
-	"github.com/spf13/viper"
 )
 
 func (s *Store) open() error {
-	storePath := viper.GetString(config.StorePath)
-
-	content, err := s.Fs.ReadFile(storePath)
+	content, err := s.Fs.ReadFile(s.StorePath)
 	if err != nil {
 		return fmt.Errorf("reading store file: %w", err)
 	}
@@ -31,9 +26,7 @@ func (s *Store) close() error {
 		return fmt.Errorf("marshalling store: %w", err)
 	}
 
-	storePath := viper.GetString(config.StorePath)
-
-	err = s.Fs.WriteReader(storePath, bytes.NewReader(rawStore))
+	err = s.Fs.WriteReader(s.StorePath, bytes.NewReader(rawStore))
 	if err != nil {
 		return fmt.Errorf("writing store to disk: %w", err)
 	}

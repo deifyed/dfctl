@@ -3,16 +3,18 @@ package taint
 import (
 	"fmt"
 
+	"github.com/deifyed/infect/pkg/config"
 	"github.com/deifyed/infect/pkg/storage"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func RunE(fs *afero.Afero) func(*cobra.Command, []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		targetPath := args[0]
 
-		db := storage.Store{Fs: fs}
+		db := storage.Store{Fs: fs, StorePath: viper.GetString(config.StorePath)}
 
 		trackedPath, err := db.Get(targetPath)
 		if err != nil {

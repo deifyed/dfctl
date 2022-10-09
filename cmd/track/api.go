@@ -44,7 +44,7 @@ func track(fs *afero.Afero, targetPath string) error {
 		return fmt.Errorf("ensuring dotfiles directory: %w", err)
 	}
 
-	db := storage.Store{Fs: fs}
+	db := storage.Store{Fs: fs, StorePath: viper.GetString(config.StorePath)}
 
 	err = db.Put(storage.Path{OriginalPath: targetPath, DotFilesPath: dest})
 	if err != nil {

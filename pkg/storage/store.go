@@ -9,7 +9,8 @@ import (
 )
 
 type Store struct {
-	Fs *afero.Afero
+	Fs        *afero.Afero
+	StorePath string
 
 	paths []Path
 }
