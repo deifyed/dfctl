@@ -6,37 +6,34 @@ import (
 	"fmt"
 
 	"github.com/deifyed/infect/pkg/config"
-	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 )
 
-func open(fs *afero.Afero) (store, error) {
+func (s *Store) open() error {
 	storePath := viper.GetString(config.StorePath)
 
-	content, err := fs.ReadFile(storePath)
+	content, err := s.Fs.ReadFile(storePath)
 	if err != nil {
-		return store{}, fmt.Errorf("reading store file: %w", err)
+		return fmt.Errorf("reading store file: %w", err)
 	}
 
-	var db store
-
-	err = json.Unmarshal(content, &db)
+	err = json.Unmarshal(content, &s.paths)
 	if err != nil {
-		return store{}, fmt.Errorf("unmarshalling store file: %w", err)
+		return fmt.Errorf("unmarshalling store file: %w", err)
 	}
 
-	return db, nil
+	return nil
 }
 
-func close(fs *afero.Afero, db store) error {
-	rawStore, err := json.Marshal(db)
+func (s *Store) close() error {
+	rawStore, err := json.Marshal(s.paths)
 	if err != nil {
 		return fmt.Errorf("marshalling store: %w", err)
 	}
 
 	storePath := viper.GetString(config.StorePath)
 
-	err = fs.WriteReader(storePath, bytes.NewReader(rawStore))
+	err = s.Fs.WriteReader(storePath, bytes.NewReader(rawStore))
 	if err != nil {
 		return fmt.Errorf("writing store to disk: %w", err)
 	}

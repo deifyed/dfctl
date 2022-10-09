@@ -11,7 +11,9 @@ import (
 
 func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		trackedPaths, err := storage.GetAll(fs)
+		db := storage.Store{Fs: fs}
+
+		trackedPaths, err := db.GetAll()
 		if err != nil {
 			return fmt.Errorf("getting tracked paths: %w", err)
 		}
@@ -19,22 +21,7 @@ func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 		if len(trackedPaths) == 0 {
 			fmt.Println("No tracked paths found")
 
-			trackedPaths = []storage.Path{
-				{
-					OriginalPath: "/home/deifyed/.config/nvim",
-					DotFilesPath: "/home/deifyed/.dotfiles/nvim",
-				},
-				{
-					OriginalPath: "/home/deifyed/.config/sway",
-					DotFilesPath: "/home/deifyed/.dotfiles/sway",
-					Taint:        true,
-				},
-				{
-					OriginalPath: "/home/deifyed/.config/alacritty",
-					DotFilesPath: "/home/deifyed/.dotfiles/alacritty",
-				},
-			}
-			//return nil
+			return nil
 		}
 
 		sortedTrackedPaths := sortTrackedPaths(trackedPaths)

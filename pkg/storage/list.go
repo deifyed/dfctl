@@ -1,15 +1,15 @@
 package storage
 
-func upsert(db *store, el Path) {
-	remove(db, el)
+func (s *Store) upsert(el Path) {
+	s.remove(el)
 
-	db.Paths = append(db.Paths, el)
+	s.paths = append(s.paths, el)
 }
 
-func remove(db *store, el Path) {
-	for i, path := range db.Paths {
+func (s *Store) remove(el Path) {
+	for i, path := range s.paths {
 		if path.OriginalPath == el.OriginalPath {
-			db.Paths = append(db.Paths[:i], db.Paths[i+1:]...)
+			s.paths = append(s.paths[:i], s.paths[i+1:]...)
 
 			break
 		}
