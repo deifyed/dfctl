@@ -84,5 +84,5 @@ func validate(fs *afero.Afero, targetPath string) error {
 }
 
 func sanitizeTargetPath(targetPath string) string {
-	return strings.ReplaceAll(targetPath, "/", "_")
+	return strings.ReplaceAll(targetPath, "/", "-")[1:]
 }
