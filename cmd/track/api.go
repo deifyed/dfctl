@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/deifyed/infect/pkg/config"
@@ -37,26 +38,31 @@ const defaultFolderPermissions = 0o700
 func track(fs *afero.Afero, targetPath string) error {
 	dotFilesDir := viper.GetString(config.DotFilesDir)
 
-	dest := path.Join(dotFilesDir, strings.ReplaceAll(targetPath, "/", "-"))
+	absoluteTargetPath, err := filepath.Abs(targetPath)
+	if err != nil {
+		return fmt.Errorf("acquiring absolute target path: %w", err)
+	}
 
-	err := fs.MkdirAll(dotFilesDir, defaultFolderPermissions)
+	dest := path.Join(dotFilesDir, sanitizeTargetPath(absoluteTargetPath))
+
+	err = fs.MkdirAll(dotFilesDir, defaultFolderPermissions)
 	if err != nil {
 		return fmt.Errorf("ensuring dotfiles directory: %w", err)
 	}
 
 	db := storage.Store{Fs: fs, StorePath: viper.GetString(config.StorePath)}
 
-	err = db.Put(storage.Path{OriginalPath: targetPath, DotFilesPath: dest})
+	err = db.Put(storage.Path{OriginalPath: absoluteTargetPath, DotFilesPath: dest})
 	if err != nil {
 		return fmt.Errorf("storing path: %w", err)
 	}
 
-	err = fs.Rename(targetPath, dest)
+	err = fs.Rename(absoluteTargetPath, dest)
 	if err != nil {
 		return fmt.Errorf("moving directory: %w", err)
 	}
 
-	err = os.Symlink(dest, targetPath)
+	err = os.Symlink(dest, absoluteTargetPath)
 	if err != nil {
 		return fmt.Errorf("linking: %w", err)
 	}
@@ -75,4 +81,8 @@ func validate(fs *afero.Afero, targetPath string) error {
 	}
 
 	return nil
+}
+
+func sanitizeTargetPath(targetPath string) string {
+	return strings.ReplaceAll(targetPath, "/", "_")
 }
