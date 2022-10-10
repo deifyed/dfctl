@@ -15,12 +15,14 @@ var (
 	fs          = &afero.Afero{Fs: afero.NewOsFs()}
 	cfgFile     string
 	dotfilesDir string
+	storePath   string
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "infect",
-	Short: "Infect a filesystem with dotfiles",
+	Use:          "infect",
+	Short:        "Infect a filesystem with dotfiles",
+	SilenceUsage: true,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -43,7 +45,10 @@ func init() {
 	home, err := os.UserHomeDir()
 	cobra.CheckErr(err)
 
-	viper.SetDefault(config.DotFilesDir, path.Join(home, ".config", "infect", "dotfiles"))
+	dotfilesDir := path.Join(home, ".config", "infect", "dotfiles")
+
+	viper.SetDefault(config.DotFilesDir, dotfilesDir)
+	viper.SetDefault(config.StorePath, path.Join(dotfilesDir, "paths.json"))
 
 	rootCmd.PersistentFlags().StringVar(
 		&cfgFile,
@@ -59,6 +64,14 @@ func init() {
 		viper.GetString(config.DotFilesDir),
 		"directory where dotfiles are stored",
 	)
+
+	rootCmd.Flags().StringVarP(
+		&storePath,
+		"store-path",
+		"s",
+		viper.GetString(config.StorePath),
+		"path to where the paths.json file is stored",
+	)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -66,8 +79,6 @@ func initConfig() {
 	// Find home directory.
 	home, err := os.UserHomeDir()
 	cobra.CheckErr(err)
-
-	viper.SetDefault(config.DotFilesDir, path.Join(home, ".config", "infect", "dotfiles"))
 
 	// Search config in home directory with name ".infect" (without extension).
 	viper.AddConfigPath(path.Join(home, ".config", "infect"))
