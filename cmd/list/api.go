@@ -28,14 +28,14 @@ func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 
 		sortedTrackedPaths := sortTrackedPaths(trackedPaths)
 
-		for index, trackedPath := range sortedTrackedPaths {
+		for _, trackedPath := range sortedTrackedPaths {
 			taint := ""
 
 			if trackedPath.Taint {
 				taint = " (tainted)"
 			}
 
-			fmt.Printf("[%d] %-50s %s\n", index, trackedPath.OriginalPath, taint)
+			fmt.Printf("%-50s %s\n", trackedPath.OriginalPath, taint)
 		}
 
 		return nil
