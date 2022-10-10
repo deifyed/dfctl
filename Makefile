@@ -9,6 +9,8 @@ fmt:
 test:
 	go test -v ./...
 
+check: fmt test
+
 build:
 	mkdir -p $(BUILD_DIR)
 	go build -o $(BUILD_DIR)/$(BINARY_NAME) main.go
