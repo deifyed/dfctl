@@ -3,6 +3,7 @@ package untrack
 import (
 	"fmt"
 	"path"
+	"path/filepath"
 
 	"github.com/deifyed/infect/pkg/config"
 	"github.com/deifyed/infect/pkg/storage"
@@ -13,8 +14,12 @@ import (
 
 func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		targetPath := args[0]
 		storePath := path.Join(viper.GetString(config.DotFilesDir), "paths.json")
+
+		targetPath, err := filepath.Abs(args[0])
+		if err != nil {
+			return fmt.Errorf("getting absolute path: %w", err)
+		}
 
 		if err := untrack(fs, storePath, targetPath); err != nil {
 			return fmt.Errorf("untracking path: %w", err)
@@ -30,7 +35,7 @@ func untrack(fs *afero.Afero, storePath string, targetPath string) error {
 
 	trackedPath, err := db.Get(targetPath)
 	if err != nil {
-		return fmt.Errorf("storing path: %w", err)
+		return fmt.Errorf("retrieving path data: %w", err)
 	}
 
 	if err := fs.Remove(targetPath); err != nil {

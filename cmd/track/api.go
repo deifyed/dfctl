@@ -16,10 +16,14 @@ import (
 
 func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		targetPath := args[0]
 		storePath := path.Join(viper.GetString(config.DotFilesDir), "paths.json")
 
-		err := validate(fs, targetPath)
+		targetPath, err := filepath.Abs(args[0])
+		if err != nil {
+			return fmt.Errorf("getting absolute path: %w", err)
+		}
+
+		err = validate(fs, targetPath)
 		if err != nil {
 			return fmt.Errorf("validating: %w", err)
 		}
@@ -39,31 +43,26 @@ const defaultFolderPermissions = 0o700
 func track(fs *afero.Afero, storePath string, targetPath string) error {
 	dotFilesDir := viper.GetString(config.DotFilesDir)
 
-	absoluteTargetPath, err := filepath.Abs(targetPath)
-	if err != nil {
-		return fmt.Errorf("acquiring absolute target path: %w", err)
-	}
+	dest := path.Join(dotFilesDir, sanitizeTargetPath(targetPath))
 
-	dest := path.Join(dotFilesDir, sanitizeTargetPath(absoluteTargetPath))
-
-	err = fs.MkdirAll(dotFilesDir, defaultFolderPermissions)
+	err := fs.MkdirAll(dotFilesDir, defaultFolderPermissions)
 	if err != nil {
 		return fmt.Errorf("ensuring dotfiles directory: %w", err)
 	}
 
 	db := storage.Store{Fs: fs, StorePath: storePath}
 
-	err = db.Put(storage.Path{OriginalPath: absoluteTargetPath, DotFilesPath: dest})
+	err = db.Put(storage.Path{OriginalPath: targetPath, DotFilesPath: dest})
 	if err != nil {
 		return fmt.Errorf("storing path: %w", err)
 	}
 
-	err = fs.Rename(absoluteTargetPath, dest)
+	err = fs.Rename(targetPath, dest)
 	if err != nil {
 		return fmt.Errorf("moving directory: %w", err)
 	}
 
-	err = os.Symlink(dest, absoluteTargetPath)
+	err = os.Symlink(dest, targetPath)
 	if err != nil {
 		return fmt.Errorf("linking: %w", err)
 	}
