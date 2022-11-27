@@ -9,7 +9,7 @@ Need to handle dotfiles. Why not write some code
 ```shell
 # Infect filesystem with dotfiles.
 # This will link all tracked files and folders to their target locations.
-infect
+infect spread
 
 # Track a file or folder.
 # This will return the tracked file or folder to this location upon infection.
