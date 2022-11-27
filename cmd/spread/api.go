@@ -30,6 +30,12 @@ func RunE(log logger, fs *afero.Afero) func(cmd *cobra.Command, args []string) e
 		for _, target := range paths {
 			log.Debugf("Spreading target %v+", target)
 
+			if target.Taint {
+				log.Debugf("Target %v+ is tainted, skipping", target)
+
+				continue
+			}
+
 			err = os.Symlink(target.DotFilesPath, target.OriginalPath)
 			if err != nil {
 				if os.IsExist(err) {
