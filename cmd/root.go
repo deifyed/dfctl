@@ -23,6 +23,11 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   appName,
 	Short: "Manage your dotfiles",
+	Long: `dfctl is a tool for managing dotfiles. This is done by moving relevant files
+to a centralized directory and symlinking them to the original path.
+
+This enables easy versioning and sharing of dotfiles.
+`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		configureLogger(log)
 
