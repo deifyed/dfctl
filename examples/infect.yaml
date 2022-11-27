@@ -1,4 +1,3 @@
 logLevel: debug # Set the amount of logging that should be done [info, debug]
 dotFilesDir: /home/user/.config/dotfiles # Set where to place tracked files and directories
 storePath: /home/user/.config/dotfiles # Set where to place the file where we store tracked files and directories
-

@@ -2,6 +2,7 @@ package list
 
 import (
 	"fmt"
+	"path"
 	"sort"
 
 	"github.com/deifyed/infect/pkg/config"
@@ -13,7 +14,8 @@ import (
 
 func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
-		db := storage.Store{Fs: fs, StorePath: viper.GetString(config.StorePath)}
+		storePath := path.Join(viper.GetString(config.DotFilesDir), "paths.json")
+		db := storage.Store{Fs: fs, StorePath: storePath}
 
 		trackedPaths, err := db.GetAll()
 		if err != nil {

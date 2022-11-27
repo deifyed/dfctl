@@ -2,6 +2,7 @@ package untrack
 
 import (
 	"fmt"
+	"path"
 
 	"github.com/deifyed/infect/pkg/config"
 	"github.com/deifyed/infect/pkg/storage"
@@ -13,8 +14,9 @@ import (
 func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		targetPath := args[0]
+		storePath := path.Join(viper.GetString(config.DotFilesDir), "paths.json")
 
-		if err := untrack(fs, targetPath); err != nil {
+		if err := untrack(fs, storePath, targetPath); err != nil {
 			return fmt.Errorf("untracking path: %w", err)
 		}
 
@@ -23,8 +25,8 @@ func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 }
 
 // untrack will unlink the target and return the source file or folder to this location
-func untrack(fs *afero.Afero, targetPath string) error {
-	db := storage.Store{Fs: fs, StorePath: viper.GetString(config.StorePath)}
+func untrack(fs *afero.Afero, storePath string, targetPath string) error {
+	db := storage.Store{Fs: fs, StorePath: storePath}
 
 	trackedPath, err := db.Get(targetPath)
 	if err != nil {

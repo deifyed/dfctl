@@ -12,10 +12,8 @@ import (
 )
 
 var (
-	fs          = &afero.Afero{Fs: afero.NewOsFs()}
-	cfgFile     string
-	dotfilesDir string
-	storePath   string
+	fs      = &afero.Afero{Fs: afero.NewOsFs()}
+	cfgFile string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -48,7 +46,6 @@ func init() {
 	dotfilesDir := path.Join(home, ".config", "infect", "dotfiles")
 
 	viper.SetDefault(config.DotFilesDir, dotfilesDir)
-	viper.SetDefault(config.StorePath, path.Join(dotfilesDir, "paths.json"))
 
 	rootCmd.PersistentFlags().StringVar(
 		&cfgFile,
@@ -57,20 +54,11 @@ func init() {
 		"config file (default is $HOME/.config/infect/infect.yaml)",
 	)
 
-	rootCmd.Flags().StringVarP(
-		&dotfilesDir,
-		"dotfiles-dir",
+	rootCmd.Flags().StringP(
+		config.DotFilesDir,
 		"d",
 		viper.GetString(config.DotFilesDir),
 		"directory where dotfiles are stored",
-	)
-
-	rootCmd.Flags().StringVarP(
-		&storePath,
-		"store-path",
-		"s",
-		viper.GetString(config.StorePath),
-		"path to where the paths.json file is stored",
 	)
 }
 

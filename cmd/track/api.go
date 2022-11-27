@@ -17,13 +17,14 @@ import (
 func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		targetPath := args[0]
+		storePath := path.Join(viper.GetString(config.DotFilesDir), "paths.json")
 
 		err := validate(fs, targetPath)
 		if err != nil {
 			return fmt.Errorf("validating: %w", err)
 		}
 
-		err = track(fs, targetPath)
+		err = track(fs, storePath, targetPath)
 		if err != nil {
 			return fmt.Errorf("tracking path %s: %w", targetPath, err)
 		}
@@ -35,7 +36,7 @@ func RunE(fs *afero.Afero) func(cmd *cobra.Command, args []string) error {
 const defaultFolderPermissions = 0o700
 
 // track moves target path to dotfilesDir and leaves a symlink
-func track(fs *afero.Afero, targetPath string) error {
+func track(fs *afero.Afero, storePath string, targetPath string) error {
 	dotFilesDir := viper.GetString(config.DotFilesDir)
 
 	absoluteTargetPath, err := filepath.Abs(targetPath)
@@ -50,7 +51,7 @@ func track(fs *afero.Afero, targetPath string) error {
 		return fmt.Errorf("ensuring dotfiles directory: %w", err)
 	}
 
-	db := storage.Store{Fs: fs, StorePath: viper.GetString(config.StorePath)}
+	db := storage.Store{Fs: fs, StorePath: storePath}
 
 	err = db.Put(storage.Path{OriginalPath: absoluteTargetPath, DotFilesPath: dest})
 	if err != nil {
