@@ -4,12 +4,14 @@ import (
 	"os"
 	"path"
 
-	"github.com/deifyed/infect/pkg/config"
+	"github.com/deifyed/dfctl/pkg/config"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
+
+const appName = "dfctl"
 
 var (
 	log     = logrus.New()
@@ -19,8 +21,8 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "infect",
-	Short: "Infect a filesystem with dotfiles",
+	Use:   appName,
+	Short: "Manage your dotfiles",
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		configureLogger(log)
 
@@ -49,7 +51,7 @@ func init() {
 	home, err := os.UserHomeDir()
 	cobra.CheckErr(err)
 
-	dotfilesDir := path.Join(home, ".config", "infect", "dotfiles")
+	dotfilesDir := path.Join(home, ".config", appName, "dotfiles")
 
 	viper.SetDefault(config.DotFilesDir, dotfilesDir)
 
@@ -62,7 +64,7 @@ func init() {
 		&cfgFile,
 		"config",
 		"",
-		"config file (default is $HOME/.config/infect/infect.yaml)",
+		"config file (default is $HOME/.config/dfctl/config.yaml)",
 	)
 
 	rootCmd.PersistentFlags().StringP(
@@ -79,10 +81,9 @@ func initConfig() {
 	home, err := os.UserHomeDir()
 	cobra.CheckErr(err)
 
-	// Search config in home directory with name ".infect" (without extension).
-	viper.AddConfigPath(path.Join(home, ".config", "infect"))
+	viper.AddConfigPath(path.Join(home, ".config", "dfctl"))
 	viper.SetConfigType("yaml")
-	viper.SetConfigName("infect")
+	viper.SetConfigName("config")
 
 	viper.AutomaticEnv() // read in environment variables that match
 

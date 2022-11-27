@@ -1,5 +1,5 @@
 .PHONY=fmt
-BINARY_NAME=infect
+BINARY_NAME=dfctl
 GOPATH := $(shell go env GOPATH)
 GOBIN ?= $(GOPATH)/bin
 PREFIX=~/.local/bin

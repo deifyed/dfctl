@@ -1,4 +1,4 @@
-module github.com/deifyed/infect
+module github.com/deifyed/dfctl
 
 go 1.19
 

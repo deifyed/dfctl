@@ -1,14 +1,14 @@
 package cmd
 
 import (
-	"github.com/deifyed/infect/cmd/list"
+	"github.com/deifyed/dfctl/cmd/list"
 	"github.com/spf13/cobra"
 )
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List infected paths",
+	Short: "List tracked paths",
 	Long:  "This will list all tracked files and folders",
 	RunE:  list.RunE(fs),
 }

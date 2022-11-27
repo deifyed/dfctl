@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/deifyed/infect/cmd/track"
+	"github.com/deifyed/dfctl/cmd/track"
 	"github.com/spf13/cobra"
 )
 

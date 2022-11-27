@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/deifyed/infect/cmd/untaint"
+	"github.com/deifyed/dfctl/cmd/untaint"
 	"github.com/spf13/cobra"
 )
 
@@ -9,7 +9,7 @@ import (
 var untaintCmd = &cobra.Command{
 	Use:   "untaint",
 	Short: "Untaint a certain path",
-	Long:  "Unmark certain path so infection will spread the path again",
+	Long:  "Unmark certain path to not be ignored anymore when relinking dotfiles",
 	RunE:  untaint.RunE(fs),
 }
 

@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/deifyed/infect/pkg/config"
-	"github.com/deifyed/infect/pkg/storage"
+	"github.com/deifyed/dfctl/pkg/config"
+	"github.com/deifyed/dfctl/pkg/storage"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

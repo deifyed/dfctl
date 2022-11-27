@@ -1,6 +1,6 @@
 package main
 
-import "github.com/deifyed/infect/cmd"
+import "github.com/deifyed/dfctl/cmd"
 
 func main() {
 	cmd.Execute()

@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/deifyed/infect/cmd/taint"
+	"github.com/deifyed/dfctl/cmd/taint"
 	"github.com/spf13/cobra"
 )
 
@@ -9,7 +9,7 @@ import (
 var taintCmd = &cobra.Command{
 	Use:   "taint",
 	Short: "Taint a certain path",
-	Long:  "Mark certain paths as to not spread them when infecting filesystem",
+	Long:  "Mark certain paths as to ignore them when relinking dotfiles",
 	RunE:  taint.RunE(fs),
 }
 

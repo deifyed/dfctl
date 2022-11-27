@@ -1,4 +1,4 @@
-# Infect
+# dfctl
 
 ## Motivation
 
@@ -7,27 +7,21 @@ Need to handle dotfiles. Why not write some code
 ## Usage
 
 ```shell
-# Infect filesystem with dotfiles.
-# This will link all tracked files and folders to their target locations.
-infect spread
+# Relink all tracked paths
+dfctl relink
 
 # Track a file or folder.
-# This will return the tracked file or folder to this location upon infection.
-infect track <path>
+dfctl track <path>
 
 # Untrack a file or folder.
-# This will unlink the target and return the source file or folder to this location.
-infect untrack <path>
+dfctl untrack <path>
 
-# List infected paths.
-# This will list all tracked files and folders.
-infect list
+# List dfctled paths.
+dfctl list
 
-# Taint a certain path.
-# Mark certain paths as to not spread them when infecting filesystem.
-infect taint <path>
+# Taint a certain path. Taint prevents a path from being relinked when running `dfctl relink`.
+dfctl taint <path>
 
-# Untaint a certain path.
-# Unmark certain path so infection will spread the path again.
+# Untaint a certain path. Untaint allows a path to be relinked when running `dfctl relink`.
 infect untaint <path>
 ```
