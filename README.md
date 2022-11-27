@@ -25,3 +25,20 @@ dfctl taint <path>
 # Untaint a certain path. Untaint allows a path to be relinked when running `dfctl relink`.
 infect untaint <path>
 ```
+
+## Install
+
+To install, run `make install`. This will install the `dfctl` binary to `~/.local/bin`. Make sure this directory is in your
+`$PATH`.
+
+```shell
+# Example
+make build && make install
+```
+
+To change the installation directory, set the `PREFIX` environment variable.
+
+```shell
+# Example
+make build && PREFIX=/usr/local make install
+```
