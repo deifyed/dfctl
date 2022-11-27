@@ -1,25 +1,31 @@
 package cmd
 
 import (
-	"fmt"
 	"os"
 	"path"
 
 	"github.com/deifyed/infect/pkg/config"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
+	log     = logrus.New()
 	fs      = &afero.Afero{Fs: afero.NewOsFs()}
 	cfgFile string
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:          "infect",
-	Short:        "Infect a filesystem with dotfiles",
+	Use:   "infect",
+	Short: "Infect a filesystem with dotfiles",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		configureLogger(log)
+
+		return nil
+	},
 	SilenceUsage: true,
 }
 
@@ -47,6 +53,9 @@ func init() {
 
 	viper.SetDefault(config.DotFilesDir, dotfilesDir)
 
+	rootCmd.PersistentFlags().StringP(config.LogLevel, "l", "info", "Log level")
+	viper.BindPFlag(config.LogLevel, rootCmd.PersistentFlags().Lookup(config.LogLevel))
+
 	rootCmd.PersistentFlags().StringVar(
 		&cfgFile,
 		"config",
@@ -54,7 +63,7 @@ func init() {
 		"config file (default is $HOME/.config/infect/infect.yaml)",
 	)
 
-	rootCmd.Flags().StringP(
+	rootCmd.PersistentFlags().StringP(
 		config.DotFilesDir,
 		"d",
 		viper.GetString(config.DotFilesDir),
@@ -70,14 +79,31 @@ func initConfig() {
 
 	// Search config in home directory with name ".infect" (without extension).
 	viper.AddConfigPath(path.Join(home, ".config", "infect"))
-	viper.AddConfigPath(home)
 	viper.SetConfigType("yaml")
-	viper.SetConfigName(".infect")
+	viper.SetConfigName("infect")
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+		cobra.CheckErr(err)
 	}
+}
+
+func configureLogger(log *logrus.Logger) {
+	log.SetFormatter(&logrus.JSONFormatter{PrettyPrint: true})
+
+	logLevel, err := logrus.ParseLevel(viper.GetString(config.LogLevel))
+	if err != nil {
+		logLevel = logrus.InfoLevel
+		log.Warnf("invalid log level: %s", viper.GetString(config.LogLevel))
+	}
+
+	log.SetLevel(logLevel)
+
+	log.WithFields(logrus.Fields{
+		"log-level":   logLevel,
+		"configFile":  viper.ConfigFileUsed(),
+		"dotfilesDir": viper.GetString(config.DotFilesDir),
+	}).Debug("logger configured")
 }
