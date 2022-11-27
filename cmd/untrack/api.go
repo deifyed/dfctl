@@ -47,5 +47,9 @@ func untrack(fs *afero.Afero, storePath string, targetPath string) error {
 		return fmt.Errorf("moving directory: %w", err)
 	}
 
+	if err := db.Delete(targetPath); err != nil {
+		return fmt.Errorf("deleting path from database: %w", err)
+	}
+
 	return nil
 }
